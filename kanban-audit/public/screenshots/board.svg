@@ -1,0 +1,14 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" fill="#F6F4EF"/>
+  <rect x="60" y="60" width="1080" height="555" rx="24" fill="#FFFFFF" stroke="#E4E1D9" stroke-width="2"/>
+  <rect x="100" y="120" width="300" height="420" rx="16" fill="#F3F1EC" stroke="#E4E1D9"/>
+  <rect x="450" y="120" width="300" height="420" rx="16" fill="#F3F1EC" stroke="#E4E1D9"/>
+  <rect x="800" y="120" width="300" height="420" rx="16" fill="#F3F1EC" stroke="#E4E1D9"/>
+  <text x="100" y="100" font-family="Arial" font-size="20" fill="#425466">Board</text>
+  <text x="120" y="190" font-family="Arial" font-size="16" fill="#425466">Todo</text>
+  <text x="470" y="190" font-family="Arial" font-size="16" fill="#425466">Doing</text>
+  <text x="820" y="190" font-family="Arial" font-size="16" fill="#425466">Done</text>
+  <text x="120" y="320" font-family="Arial" font-size="14" fill="#94A3B8">Placeholder</text>
+  <text x="470" y="320" font-family="Arial" font-size="14" fill="#94A3B8">Placeholder</text>
+  <text x="820" y="320" font-family="Arial" font-size="14" fill="#94A3B8">Placeholder</text>
+</svg>

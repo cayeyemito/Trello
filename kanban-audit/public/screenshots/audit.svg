@@ -1,0 +1,9 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" fill="#F6F4EF"/>
+  <rect x="60" y="60" width="1080" height="555" rx="24" fill="#FFFFFF" stroke="#E4E1D9" stroke-width="2"/>
+  <text x="100" y="120" font-family="Arial" font-size="20" fill="#425466">Audit Log</text>
+  <rect x="100" y="160" width="1000" height="40" rx="8" fill="#F3F1EC"/>
+  <rect x="100" y="220" width="1000" height="40" rx="8" fill="#F3F1EC"/>
+  <rect x="100" y="280" width="1000" height="40" rx="8" fill="#F3F1EC"/>
+  <text x="100" y="340" font-family="Arial" font-size="14" fill="#94A3B8">Placeholder table</text>
+</svg>
