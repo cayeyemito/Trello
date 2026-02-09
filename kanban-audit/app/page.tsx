@@ -13,6 +13,7 @@ import { ImportExportPanel } from "@/src/components/import/ImportExportPanel";
 import { SearchBar } from "@/src/components/search/SearchBar";
 import { Button } from "@/src/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 import { applyQuery, parseQuery, type ParsedQuery } from "@/src/lib/query";
 import { createAuditEvent, logEvent, reverseApplyEvent } from "@/src/lib/audit";
 import {
@@ -56,7 +57,7 @@ const initialAudit = createAuditEvent({
 const initialState: AppState = {
   tasks: seedTasks,
   audit: [initialAudit],
-  ui: { godMode: false },
+  ui: { godMode: false, lastMovedTaskId: undefined, lastMovedAt: undefined },
 };
 
 function reducer(state: AppState, action: Action): AppState {
@@ -115,7 +116,15 @@ function reducer(state: AppState, action: Action): AppState {
       const nextTasks = state.tasks.map((task) =>
         task.id === updated.id ? updated : task
       );
-      const next = { ...state, tasks: nextTasks };
+      const next = {
+        ...state,
+        tasks: nextTasks,
+        ui: {
+          ...state.ui,
+          lastMovedTaskId: updated.id,
+          lastMovedAt: new Date().toISOString(),
+        },
+      };
       return logEvent(
         next,
         createAuditEvent({
@@ -171,6 +180,8 @@ export default function Home() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [hydrated, setHydrated] = React.useState(false);
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
+  const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(null);
+  const [recentMoveId, setRecentMoveId] = React.useState<string | null>(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [parsedQuery, setParsedQuery] = React.useState<ParsedQuery>(() =>
     parseQuery("")
@@ -190,7 +201,17 @@ export default function Home() {
   React.useEffect(() => {
     if (!hydrated) return;
     saveState(state);
+    setLastSavedAt(new Date());
   }, [state, hydrated]);
+
+  React.useEffect(() => {
+    if (!state.ui.lastMovedTaskId) return;
+    setRecentMoveId(state.ui.lastMovedTaskId);
+    const timeout = window.setTimeout(() => {
+      setRecentMoveId(null);
+    }, 2000);
+    return () => window.clearTimeout(timeout);
+  }, [state.ui.lastMovedTaskId, state.ui.lastMovedAt]);
 
   React.useEffect(() => {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -372,15 +393,34 @@ export default function Home() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={() => handleCreate("todo")}>Nueva tarea</Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              setTheme((prev) => (prev === "dark" ? "light" : "dark"))
-            }
-          >
-            {theme === "dark" ? "Modo claro" : "Modo oscuro"}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={() => handleCreate("todo")}>Nueva tarea</Button>
+            </TooltipTrigger>
+            <TooltipContent>Crea una nueva tarea en Todo.</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+                }
+              >
+                {theme === "dark" ? "Modo claro" : "Modo oscuro"}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Alterna entre modo claro y oscuro.</TooltipContent>
+          </Tooltip>
+          <div className="hidden items-center gap-2 text-xs text-slate-400 lg:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-500/80" />
+            {lastSavedAt
+              ? `Guardado ${lastSavedAt.toLocaleTimeString("es-ES", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}`
+              : "Sin guardar"}
+          </div>
           <GodModeSwitch
             enabled={state.ui.godMode}
             onToggle={(value) =>
@@ -416,6 +456,7 @@ export default function Home() {
                 onDelete={handleDelete}
                 onMove={handleMove}
                 highlightMap={highlightMap}
+                recentlyMovedTaskId={recentMoveId}
               />
             </div>
             {state.ui.godMode && (

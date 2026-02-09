@@ -2,6 +2,7 @@ import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { type Task } from "@/src/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 
 type GodModePanelProps = {
   tasks: Task[];
@@ -67,9 +68,14 @@ export function GodModePanel({ tasks, onEvaluate }: GodModePanelProps) {
                   </span>
                 )}
               </div>
-              <Button size="sm" onClick={() => onEvaluate(task)}>
-                Evaluar
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" onClick={() => onEvaluate(task)}>
+                    Evaluar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Abrir para evaluar esta tarea.</TooltipContent>
+              </Tooltip>
             </div>
           ))}
         </div>
@@ -97,9 +103,14 @@ export function GodModePanel({ tasks, onEvaluate }: GodModePanelProps) {
                   </span>
                 )}
               </div>
-              <Button size="sm" variant="secondary" onClick={() => onEvaluate(task)}>
-                Editar
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" variant="secondary" onClick={() => onEvaluate(task)}>
+                    Editar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar evaluación y observaciones.</TooltipContent>
+              </Tooltip>
             </div>
           ))}
         </div>

@@ -2,6 +2,7 @@ import * as React from "react";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 
 type SearchBarProps = {
   value: string;
@@ -20,11 +21,16 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         />
       </div>
       <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" size="md" className="h-11 px-5">
-            Ayuda
-          </Button>
-        </PopoverTrigger>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="md" className="h-11 px-5">
+                Ayuda
+              </Button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent>Ver ejemplos de búsqueda avanzada.</TooltipContent>
+        </Tooltip>
         <PopoverContent>
           <p className="text-xs font-semibold text-slate-200">Ejemplos</p>
           <ul className="mt-2 space-y-1 text-xs text-slate-300">

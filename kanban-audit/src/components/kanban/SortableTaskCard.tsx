@@ -10,6 +10,7 @@ type SortableTaskCardProps = {
   onDelete: (task: Task) => void;
   onMove: (task: Task, status: TaskStatus) => void;
   highlightFields?: string[];
+  recentlyMoved?: boolean;
 };
 
 export function SortableTaskCard({
@@ -18,6 +19,7 @@ export function SortableTaskCard({
   onDelete,
   onMove,
   highlightFields,
+  recentlyMoved,
 }: SortableTaskCardProps) {
   const {
     attributes,
@@ -44,6 +46,7 @@ export function SortableTaskCard({
         onMove={onMove}
         highlightFields={highlightFields}
         isDragging={isDragging}
+        recentlyMoved={recentlyMoved}
       />
     </div>
   );

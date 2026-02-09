@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button } from "@/src/components/ui/button";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 import { type AppState } from "@/src/types";
 
 type ImportExportPanelProps = {
@@ -38,16 +39,31 @@ export function ImportExportPanel({
             placeholder="Pega el JSON exportado aquí"
           />
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => onImport(value)}>Importar</Button>
-            <Button variant="secondary" onClick={onExport}>
-              Exportar JSON
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              Cargar archivo
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={() => onImport(value)}>Importar</Button>
+              </TooltipTrigger>
+              <TooltipContent>Importar estado desde el texto JSON.</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="secondary" onClick={onExport}>
+                  Exportar JSON
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Descargar el estado actual.</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Cargar archivo
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Seleccionar un archivo JSON.</TooltipContent>
+            </Tooltip>
           </div>
           <input
             ref={fileInputRef}

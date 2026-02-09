@@ -1,6 +1,7 @@
 import * as React from "react";
 import { toast } from "sonner";
 import { Button } from "@/src/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 import { type AuditEvent } from "@/src/types";
 
 type CopySummaryButtonProps = {
@@ -37,8 +38,13 @@ export function CopySummaryButton({ events }: CopySummaryButtonProps) {
   };
 
   return (
-    <Button variant="secondary" onClick={handleCopy}>
-      Copiar resumen
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="secondary" onClick={handleCopy}>
+          Copiar resumen
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Copiar resumen del log de auditoría.</TooltipContent>
+    </Tooltip>
   );
 }

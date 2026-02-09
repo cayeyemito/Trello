@@ -48,6 +48,8 @@ export const AppStateSchema = z.object({
   audit: z.array(AuditEventSchema),
   ui: z.object({
     godMode: z.boolean(),
+    lastMovedTaskId: z.string().optional(),
+    lastMovedAt: z.string().optional(),
   }),
 });
 

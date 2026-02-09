@@ -7,7 +7,7 @@ export const STORAGE_KEY = "kanban-audit-state-v1";
 export const defaultState: AppState = {
   tasks: [],
   audit: [],
-  ui: { godMode: false },
+  ui: { godMode: false, lastMovedTaskId: undefined, lastMovedAt: undefined },
 };
 
 export function loadState(): AppState {

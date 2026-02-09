@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/src/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 
 type TimeTravelButtonProps = {
   onConfirm: () => void;
@@ -19,11 +20,16 @@ type TimeTravelButtonProps = {
 export function TimeTravelButton({ onConfirm }: TimeTravelButtonProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          Revertir (Experimental)
-        </Button>
-      </AlertDialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="outline">
+              Revertir (Experimental)
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Volver a este punto del historial.</TooltipContent>
+      </Tooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Revertir a este evento</AlertDialogTitle>

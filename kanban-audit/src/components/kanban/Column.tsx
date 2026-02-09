@@ -5,6 +5,7 @@ import { Button } from "@/src/components/ui/button";
 import { SortableTaskCard } from "@/src/components/kanban/SortableTaskCard";
 import { type Task, type TaskStatus } from "@/src/types";
 import { cn } from "@/src/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 
 type ColumnProps = {
   id: TaskStatus;
@@ -15,6 +16,7 @@ type ColumnProps = {
   onDelete: (task: Task) => void;
   onMove: (task: Task, status: TaskStatus) => void;
   highlightMap: Record<string, string[]>;
+  recentlyMovedTaskId: string | null;
 };
 
 export function Column({
@@ -26,6 +28,7 @@ export function Column({
   onDelete,
   onMove,
   highlightMap,
+  recentlyMovedTaskId,
 }: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -40,14 +43,19 @@ export function Column({
           </h3>
           <p className="text-[11px] text-slate-500">{tasks.length} tareas</p>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => onCreate(id)}
-          aria-label={`Crear tarea en ${title}`}
-        >
-          + Crear
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onCreate(id)}
+              aria-label={`Crear tarea en ${title}`}
+            >
+              + Crear
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Crear tarea en {title}.</TooltipContent>
+        </Tooltip>
       </div>
       <div
         ref={setNodeRef}
@@ -61,13 +69,18 @@ export function Column({
             {tasks.length === 0 && (
               <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-4 text-center text-xs text-slate-400">
                 <p>Sin tareas en {title}.</p>
-                <Button
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => onCreate(id)}
-                >
-                  Crear tarea
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => onCreate(id)}
+                    >
+                      Crear tarea
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Crear tarea en {title}.</TooltipContent>
+                </Tooltip>
               </div>
             )}
             {tasks.map((task) => (
@@ -78,6 +91,7 @@ export function Column({
                 onDelete={onDelete}
                 onMove={onMove}
                 highlightFields={highlightMap[task.id] ?? []}
+                recentlyMoved={recentlyMovedTaskId === task.id}
               />
             ))}
           </div>

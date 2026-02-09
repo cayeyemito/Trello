@@ -3,6 +3,7 @@ import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { MoveSelect } from "@/src/components/kanban/MoveSelect";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ type TaskCardProps = {
   onMove: (task: Task, status: TaskStatus) => void;
   highlightFields?: string[];
   isDragging?: boolean;
+  recentlyMoved?: boolean;
 };
 
 const priorityLabel: Record<Task["prioridad"], string> = {
@@ -39,6 +41,7 @@ export function TaskCard({
   onMove,
   highlightFields = [],
   isDragging,
+  recentlyMoved,
 }: TaskCardProps) {
   const dueLabel = task.fechaLimite
     ? new Date(task.fechaLimite).toLocaleDateString("es-ES", {
@@ -54,8 +57,9 @@ export function TaskCard({
   return (
     <Card
       className={cn(
-        "space-y-3 border-slate-800 bg-slate-900/80 p-4 shadow-[0_12px_28px_-20px_rgba(0,0,0,0.9)]",
-        isDragging && "opacity-60 ring-2 ring-blue-400"
+        "space-y-3 border-slate-800 bg-slate-900/80 p-4 shadow-[0_12px_28px_-20px_rgba(0,0,0,0.9)] transition-shadow",
+        isDragging && "opacity-60 ring-2 ring-blue-400",
+        recentlyMoved && "ring-2 ring-emerald-400/70"
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -110,29 +114,40 @@ export function TaskCard({
       )}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => onEdit(task)}
-            aria-label={`Editar ${task.titulo}`}
-          >
-            Editar
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+          <Tooltip>
+            <TooltipTrigger asChild>
               <Button
                 size="sm"
-                variant="outline"
-                aria-label={`Borrar ${task.titulo}`}
+                variant="secondary"
+                onClick={() => onEdit(task)}
+                aria-label={`Editar ${task.titulo}`}
               >
-                Borrar
+                Editar
               </Button>
-            </AlertDialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent>Editar la tarea.</TooltipContent>
+          </Tooltip>
+          <AlertDialog>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    aria-label={`Borrar ${task.titulo}`}
+                  >
+                    Borrar
+                  </Button>
+                </AlertDialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Eliminar la tarea.</TooltipContent>
+            </Tooltip>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Eliminar tarea</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Esta acción no se puede deshacer. Se registrará en la auditoría.
+                  Seguro que quieres borrar esta tarea? Esta accion no se puede
+                  deshacer. Se registrara en la auditoria.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

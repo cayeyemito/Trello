@@ -22,6 +22,7 @@ type BoardProps = {
   onDelete: (task: Task) => void;
   onMove: (task: Task, status: TaskStatus) => void;
   highlightMap: Record<string, string[]>;
+  recentlyMovedTaskId: string | null;
 };
 
 const columns: { id: TaskStatus; title: string }[] = [
@@ -37,6 +38,7 @@ export function Board({
   onDelete,
   onMove,
   highlightMap,
+  recentlyMovedTaskId,
 }: BoardProps) {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const sensors = useSensors(
@@ -99,6 +101,7 @@ export function Board({
             onDelete={onDelete}
             onMove={onMove}
             highlightMap={highlightMap}
+            recentlyMovedTaskId={recentlyMovedTaskId}
           />
         ))}
       </div>

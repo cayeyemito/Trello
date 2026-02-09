@@ -16,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip";
 import { type Task, type TaskPriority, type TaskStatus } from "@/src/types";
 
 const schema = z
@@ -330,16 +331,26 @@ export function TaskDialog({
             )}
 
             <DialogFooter className="md:col-span-2">
-              <Button type="submit">
-                {mode === "create" ? "Crear tarea" : "Guardar cambios"}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button type="submit">
+                    {mode === "create" ? "Crear tarea" : "Guardar cambios"}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Guardar la tarea.</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancelar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Cerrar sin guardar.</TooltipContent>
+              </Tooltip>
             </DialogFooter>
           </form>
         </Form>
