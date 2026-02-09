@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Manrope, Fraunces } from "next/font/google";
 import { Toaster } from "sonner";
-import "./globals.css";
+import { TooltipProvider } from "@/src/components/ui/tooltip";
+import "./styles.css";
 
 const manrope = Manrope({
   variable: "--font-body",
@@ -27,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${manrope.variable} ${fraunces.variable} antialiased`}>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

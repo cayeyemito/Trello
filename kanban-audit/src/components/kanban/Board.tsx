@@ -2,6 +2,9 @@ import * as React from "react";
 import {
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  DragCancelEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -9,6 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { Column } from "@/src/components/kanban/Column";
+import { TaskCard } from "@/src/components/kanban/TaskCard";
 import { type Task, type TaskStatus } from "@/src/types";
 
 type BoardProps = {
@@ -34,6 +38,7 @@ export function Board({
   onMove,
   highlightMap,
 }: BoardProps) {
+  const [activeId, setActiveId] = React.useState<string | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -46,6 +51,7 @@ export function Board({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
     if (!over) return;
     if (active.id === over.id) return;
     const task = tasks.find((item) => item.id === active.id);
@@ -62,8 +68,25 @@ export function Board({
     }
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
+  };
+
+  const handleDragCancel = (_event: DragCancelEvent) => {
+    setActiveId(null);
+  };
+
+  const activeTask = activeId
+    ? tasks.find((task) => task.id === activeId) ?? null
+    : null;
+
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragCancel={handleDragCancel}
+      onDragEnd={handleDragEnd}
+    >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {columns.map((column) => (
           <Column
@@ -79,6 +102,25 @@ export function Board({
           />
         ))}
       </div>
+      <DragOverlay
+        dropAnimation={{
+          duration: 220,
+          easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        }}
+      >
+        {activeTask ? (
+          <div className="scale-[1.02] rotate-[0.35deg]">
+            <TaskCard
+              task={activeTask}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              onMove={() => {}}
+              highlightFields={highlightMap[activeTask.id] ?? []}
+              isDragging
+            />
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

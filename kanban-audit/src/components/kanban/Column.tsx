@@ -35,8 +35,10 @@ export function Column({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-          <p className="text-xs text-slate-500">{tasks.length} tareas</p>
+          <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+            {title}
+          </h3>
+          <p className="text-[11px] text-slate-500">{tasks.length} tareas</p>
         </div>
         <Button
           size="sm"
@@ -50,14 +52,14 @@ export function Column({
       <div
         ref={setNodeRef}
         className={cn(
-          "min-h-[120px] rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-3 transition-colors",
-          isOver && "border-emerald-300 bg-emerald-50/40"
+          "min-h-[120px] rounded-xl border border-slate-800/70 bg-slate-900/40 p-3 transition-colors duration-200 ease-out",
+          isOver && "border-blue-500/60 bg-slate-900/70 ring-1 ring-blue-500/20"
         )}
       >
         <SortableContext items={tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-3">
             {tasks.length === 0 && (
-              <div className="rounded-lg border border-slate-200 bg-white p-4 text-center text-xs text-slate-500">
+              <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-4 text-center text-xs text-slate-400">
                 <p>Sin tareas en {title}.</p>
                 <Button
                   size="sm"

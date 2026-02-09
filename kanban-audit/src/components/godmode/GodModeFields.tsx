@@ -9,7 +9,7 @@ type GodModeFieldsProps = {
 export function GodModeFields({ observaciones, rubricaScore }: GodModeFieldsProps) {
   if (!observaciones && rubricaScore === undefined) return null;
   return (
-    <div className="flex items-center gap-2 text-xs text-slate-600">
+    <div className="flex items-center gap-2 text-xs text-slate-300">
       {observaciones && (
         <Badge variant="outline">Obs. Javi</Badge>
       )}

@@ -30,7 +30,9 @@ export function SortableTaskCard({
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition:
+      transition ?? "transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+    zIndex: isDragging ? 40 : "auto",
   };
 
   return (

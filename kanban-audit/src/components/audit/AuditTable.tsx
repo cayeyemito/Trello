@@ -22,7 +22,7 @@ const actionVariant: Record<AuditEvent["accion"], "default" | "outline" | "low" 
 export function AuditTable({ events, onTimeTravel }: AuditTableProps) {
   if (events.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+      <div className="rounded-xl border border-dashed border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-400">
         Sin eventos aún. Crea o mueve tareas para ver auditoría.
       </div>
     );
@@ -42,16 +42,18 @@ export function AuditTable({ events, onTimeTravel }: AuditTableProps) {
       <TableBody>
         {events.map((event, index) => (
           <TableRow key={`${event.timestamp}-${event.taskId}-${index}`}>
-            <TableCell className="text-xs text-slate-500">
-              {new Date(event.timestamp).toLocaleString("es-ES")}
+            <TableCell className="text-xs text-slate-400">
+              {new Date(event.timestamp).toLocaleString("es-ES", {
+                timeZone: "UTC",
+              })}
             </TableCell>
             <TableCell>
               <Badge variant={actionVariant[event.accion]}>{event.accion}</Badge>
             </TableCell>
-            <TableCell className="text-xs font-mono text-slate-600">
+            <TableCell className="text-xs font-mono text-slate-300">
               {event.taskId}
             </TableCell>
-            <TableCell className="text-xs text-slate-600">
+            <TableCell className="text-xs text-slate-300">
               {summarizeDiff(event.diff)}
             </TableCell>
             <TableCell>

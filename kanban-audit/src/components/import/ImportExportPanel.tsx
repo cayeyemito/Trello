@@ -60,7 +60,7 @@ export function ImportExportPanel({
             }}
           />
           {importErrors.length > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+            <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-200">
               <p className="font-semibold">Errores de importación</p>
               <ul className="mt-2 list-disc pl-4">
                 {importErrors.map((error) => (

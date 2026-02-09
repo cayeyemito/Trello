@@ -12,7 +12,6 @@ import { GodModePanel } from "@/src/components/godmode/GodModePanel";
 import { ImportExportPanel } from "@/src/components/import/ImportExportPanel";
 import { SearchBar } from "@/src/components/search/SearchBar";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { applyQuery, parseQuery, type ParsedQuery } from "@/src/lib/query";
 import { createAuditEvent, logEvent, reverseApplyEvent } from "@/src/lib/audit";
@@ -34,6 +33,7 @@ type Action =
   | { type: "DELETE_TASK"; payload: { taskId: string } }
   | { type: "MOVE_TASK"; payload: { taskId: string; status: TaskStatus } }
   | { type: "TOGGLE_GODMODE"; payload: { value: boolean } }
+  | { type: "HYDRATE_STATE"; payload: { state: AppState } }
   | {
       type: "IMPORT_STATE";
       payload: {
@@ -129,6 +129,9 @@ function reducer(state: AppState, action: Action): AppState {
     case "TOGGLE_GODMODE": {
       return { ...state, ui: { ...state.ui, godMode: action.payload.value } };
     }
+    case "HYDRATE_STATE": {
+      return action.payload.state;
+    }
     case "IMPORT_STATE": {
       const incoming = action.payload.state;
       if (action.payload.mode === "time-travel") {
@@ -164,16 +167,10 @@ function reducer(state: AppState, action: Action): AppState {
   }
 }
 
-function getInitialState() {
-  if (typeof window !== "undefined") {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return initialState;
-  }
-  return loadState();
-}
-
 export default function Home() {
-  const [state, dispatch] = React.useReducer(reducer, undefined, getInitialState);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [hydrated, setHydrated] = React.useState(false);
+  const [theme, setTheme] = React.useState<"dark" | "light">("dark");
   const [searchValue, setSearchValue] = React.useState("");
   const [parsedQuery, setParsedQuery] = React.useState<ParsedQuery>(() =>
     parseQuery("")
@@ -191,8 +188,34 @@ export default function Home() {
   const [searchFilter, setSearchFilter] = React.useState("");
 
   React.useEffect(() => {
+    if (!hydrated) return;
     saveState(state);
-  }, [state]);
+  }, [state, hydrated]);
+
+  React.useEffect(() => {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      setHydrated(true);
+      return;
+    }
+    const stored = loadState();
+    if (stored.tasks.length > 0 || stored.audit.length > 0 || stored.ui.godMode) {
+      dispatch({ type: "HYDRATE_STATE", payload: { state: stored } });
+    }
+    setHydrated(true);
+  }, []);
+
+  React.useEffect(() => {
+    const storedTheme = window.localStorage.getItem("kanban-theme");
+    if (storedTheme === "light" || storedTheme === "dark") {
+      setTheme(storedTheme);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("kanban-theme", theme);
+  }, [theme]);
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
@@ -302,6 +325,10 @@ export default function Home() {
     return map;
   }, [state.audit]);
 
+  if (!hydrated) {
+    return null;
+  }
+
   const handleTimeTravel = (index: number) => {
     const targetEvents = state.audit.slice(0, index + 1);
     const toRevert = state.audit.slice(index + 1).reverse();
@@ -331,21 +358,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen px-6 py-8 lg:px-10">
-      <header className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <header className="mb-8 flex flex-col gap-6 border-b border-slate-800/70 pb-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-600">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
             Kanban Audit Lab
           </p>
-          <h1 className="text-3xl font-semibold text-slate-900">
+          <h1 className="text-3xl font-semibold text-slate-100">
             Control operativo de trading
           </h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-600">
+          <p className="mt-2 max-w-xl text-sm text-slate-400">
             Tablero para operaciones críticas con auditoría detallada, búsqueda
             avanzada y modo de revisión.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={() => handleCreate("todo")}>Nueva tarea</Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+            }
+          >
+            {theme === "dark" ? "Modo claro" : "Modo oscuro"}
+          </Button>
           <GodModeSwitch
             enabled={state.ui.godMode}
             onToggle={(value) =>
@@ -356,26 +391,23 @@ export default function Home() {
       </header>
 
       <Tabs defaultValue="board">
-        <TabsList>
-          <TabsTrigger value="board">Board</TabsTrigger>
-          <TabsTrigger value="audit">Audit Log</TabsTrigger>
-          <TabsTrigger value="import">Import/Export</TabsTrigger>
-        </TabsList>
+        <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <TabsList>
+            <TabsTrigger value="board">Board</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
+            <TabsTrigger value="import">Import/Export</TabsTrigger>
+          </TabsList>
+          <div className="w-full lg:max-w-2xl">
+            <SearchBar value={searchValue} onChange={handleSearchChange} />
+          </div>
+        </div>
 
         <TabsContent value="board">
-          <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <SearchBar value={searchValue} onChange={handleSearchChange} />
-            <Card className="w-full max-w-sm">
-              <CardHeader>
-                <CardTitle>Resumen rápido</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-slate-600">
-                {filteredTasks.length} tareas visibles de {state.tasks.length}
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-4">
+          <div
+            className={`grid gap-6 ${
+              state.ui.godMode ? "lg:grid-cols-4" : "lg:grid-cols-3"
+            }`}
+          >
             <div className="lg:col-span-3">
               <Board
                 tasks={filteredTasks}
@@ -387,10 +419,13 @@ export default function Home() {
               />
             </div>
             {state.ui.godMode && (
-              <GodModePanel tasks={state.tasks} onEvaluate={handleEdit} />
+              <div className="lg:col-span-1">
+                <GodModePanel tasks={state.tasks} onEvaluate={handleEdit} />
+              </div>
             )}
           </div>
         </TabsContent>
+
 
         <TabsContent value="audit">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

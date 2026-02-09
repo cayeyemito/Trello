@@ -16,20 +16,20 @@ export function computeTaskDiff(
     return { before };
   }
 
-  const beforeDiff: Partial<Task> = {};
-  const afterDiff: Partial<Task> = {};
+  const beforeDiff: Partial<Record<keyof Task, Task[keyof Task]>> = {};
+  const afterDiff: Partial<Record<keyof Task, Task[keyof Task]>> = {};
   const keys = Object.keys(before ?? {}) as (keyof Task)[];
 
   for (const key of keys) {
     const prev = before?.[key];
     const next = after?.[key];
     if (JSON.stringify(prev) !== JSON.stringify(next)) {
-      beforeDiff[key] = prev as Task[keyof Task];
-      afterDiff[key] = next as Task[keyof Task];
+      beforeDiff[key] = prev;
+      afterDiff[key] = next;
     }
   }
 
-  return { before: beforeDiff, after: afterDiff };
+  return { before: beforeDiff as Partial<Task>, after: afterDiff as Partial<Task> };
 }
 
 export function createAuditEvent(params: {
@@ -52,7 +52,10 @@ export function createAuditEvent(params: {
   };
 }
 
-export function logEvent(state: { audit: AuditEvent[] }, event: AuditEvent) {
+export function logEvent<T extends { audit: AuditEvent[] }>(
+  state: T,
+  event: AuditEvent
+): T {
   return {
     ...state,
     audit: [...state.audit, event],

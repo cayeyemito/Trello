@@ -44,33 +44,34 @@ export function TaskCard({
     ? new Date(task.fechaLimite).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "short",
+        timeZone: "UTC",
       })
     : "Sin fecha límite";
 
   const highlight = (field: string) =>
-    highlightFields.includes(field) ? "ring-1 ring-amber-400/70" : "";
+    highlightFields.includes(field) ? "ring-1 ring-amber-300/70" : "";
 
   return (
     <Card
       className={cn(
-        "p-4 space-y-3 border-slate-200 bg-white shadow-sm",
-        isDragging && "opacity-60 ring-2 ring-emerald-400"
+        "space-y-3 border-slate-800 bg-slate-900/80 p-4 shadow-[0_12px_28px_-20px_rgba(0,0,0,0.9)]",
+        isDragging && "opacity-60 ring-2 ring-blue-400"
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-slate-900">
+          <h4 className="text-sm font-semibold text-slate-100">
             {task.titulo}
           </h4>
           {task.descripcion && (
-            <p className="text-xs text-slate-600">{task.descripcion}</p>
+            <p className="text-xs text-slate-400">{task.descripcion}</p>
           )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <Badge variant={task.prioridad} className={highlight("prioridad")}>
             {priorityLabel[task.prioridad]}
           </Badge>
-          <span className="text-xs text-slate-500">{task.estimacionMin} min</span>
+          <span className="text-xs text-slate-400">{task.estimacionMin} min</span>
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -80,16 +81,16 @@ export function TaskCard({
           </Badge>
         ))}
         {task.tags.length === 0 && (
-          <span className="text-xs text-slate-400">Sin tags</span>
+          <span className="text-xs text-slate-500">Sin tags</span>
         )}
       </div>
-      <div className="flex items-center justify-between text-xs text-slate-600">
+      <div className="flex items-center justify-between text-xs text-slate-300">
         <span className={highlight("fechaLimite")}>{dueLabel}</span>
         {task.rubrica?.score !== undefined && (
           <Badge
             variant="default"
             className={cn(
-              "bg-slate-900 text-white",
+              "bg-slate-950 text-slate-100",
               highlight("rubrica")
             )}
           >
@@ -98,7 +99,12 @@ export function TaskCard({
         )}
       </div>
       {task.observacionesJavi && (
-        <div className={cn("rounded-md bg-emerald-50 p-2 text-xs text-emerald-900", highlight("observacionesJavi"))}>
+        <div
+          className={cn(
+            "rounded-md border border-emerald-500/30 bg-emerald-500/10 p-2 text-xs text-emerald-200",
+            highlight("observacionesJavi")
+          )}
+        >
           <strong>Obs. Javi:</strong> {task.observacionesJavi}
         </div>
       )}

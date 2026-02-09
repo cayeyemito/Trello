@@ -33,7 +33,7 @@ export function AuditFilters({
   return (
     <div className="grid gap-3 md:grid-cols-3">
       <div>
-        <label className="text-xs font-medium text-slate-600">Acción</label>
+        <label className="text-xs font-medium text-slate-400">Acción</label>
         <Select value={actionFilter} onValueChange={(value) => onActionChange(value as AuditEvent["accion"] | "ALL")}>
           <SelectTrigger>
             <SelectValue />
@@ -48,7 +48,7 @@ export function AuditFilters({
         </Select>
       </div>
       <div>
-        <label className="text-xs font-medium text-slate-600">Task ID</label>
+        <label className="text-xs font-medium text-slate-400">Task ID</label>
         <Input
           value={taskFilter}
           onChange={(event) => onTaskFilterChange(event.target.value)}
@@ -56,7 +56,7 @@ export function AuditFilters({
         />
       </div>
       <div>
-        <label className="text-xs font-medium text-slate-600">Búsqueda rápida</label>
+        <label className="text-xs font-medium text-slate-400">Búsqueda rápida</label>
         <Input
           value={searchFilter}
           onChange={(event) => onSearchChange(event.target.value)}
